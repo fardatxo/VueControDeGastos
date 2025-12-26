@@ -46,11 +46,17 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue';
+import { ref, computed } from 'vue';
 
-const eliminarGasto = inject('eliminarGasto');
+const props = defineProps({
+  gastos: {
+    type: Array,
+    required: true
+  }
+});
 
-const gastos = inject('gastos');
+const emit = defineEmits(['eliminar-gasto']);
+
 const filtro = ref('');
 
 const gastosFiltrados = computed(() => {

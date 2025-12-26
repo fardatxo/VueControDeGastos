@@ -1,35 +1,35 @@
 <script setup>
 import { ref } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
-import FormularioGasto from './components/FormularioGasto.vue';
+import Formulario from './components/FormularioGasto.vue';
 import ListadoGastos from './components/ListadoGastos.vue';
 
 const presupuesto = ref(0);
 const gastos = ref([]);
+const disponible = ref(0);
+const gastado = ref(0);
 
 const definirPresupuesto = (cantidad) => {
   if(cantidad <= 0) {
     alert('El presupuesto debe ser mayor a 0');
-    return false;
+    return;
   }
   presupuesto.value = cantidad;
-  return true;
+  disponible.value = cantidad;
 };
 
 const agregarGasto = (gasto) => {
   gastos.value.push(gasto);
+  gastado.value += gasto.cantidad;
+  disponible.value -= gasto.cantidad;
 };
 
 const eliminarGasto = (id) => {
-  gastos.value = gastos.value.filter(gasto => gasto.id !== id);
+  const gasto = gastos.value.find(g => g.id === id);
+  gastado.value -= gasto.cantidad;
+  disponible.value += gasto.cantidad;
+  gastos.value = gastos.value.filter(g => g.id !== id);
 };
-
-provide('presupuesto', presupuesto);
-provide('gastos', gastos);
-provide('disponible', disponible);
-provide('gastado', gastado);
-provide('agregarGasto', agregarGasto);
-provide('eliminarGasto', eliminarGasto);
 </script>
 
 <template>

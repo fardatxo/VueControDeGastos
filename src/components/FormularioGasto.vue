@@ -53,9 +53,7 @@ const cantidad = ref(0);
 const categoria = ref('');
 const gastos = inject('gastos');
 
-const agregarGasto = inject('agregarGasto');
-
-const disponible = inject('disponible');
+const emit = defineEmits(['agregar-gasto']);
 
 const handleAgregarGasto = () => {
   if (cantidad.value <= 0) {
@@ -63,21 +61,15 @@ const handleAgregarGasto = () => {
     return;
   }
 
-  if (cantidad.value > disponible.value) {
-    if (!confirm(`El gasto excede tu disponible. ¿Deseas agregarlo de todas formas?`)) {
-      return;
-    }
-  }
-
   const gasto = {
     id: Date.now(),
     nombre: nombre.value,
     cantidad: cantidad.value,
     categoria: categoria.value,
-    fecha: new Date().toISOString()
+    fecha: Date.now()
   };
 
-  agregarGasto(gasto);
+  emit('agregar-gasto', gasto);
   
   // Reset form
   nombre.value = '';

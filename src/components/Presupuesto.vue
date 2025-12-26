@@ -17,17 +17,16 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref } from 'vue';
 
 const presupuesto = ref(0);
-const emit = defineEmits(['definir-presupuesto']);
 
 const definirPresupuesto = () => {
     if (presupuesto.value <= 0) {
         alert('El presupuesto debe ser mayor a 0');
         return;
     }
-    emit('definir-presupuesto', presupuesto.value);
+    return presupuesto.value;
 };
 </script>
 
