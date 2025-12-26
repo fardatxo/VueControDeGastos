@@ -1,68 +1,27 @@
 <script setup>
-import { ref, provide, computed } from 'vue';
+import { ref } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
 import FormularioGasto from './components/FormularioGasto.vue';
 import ListadoGastos from './components/ListadoGastos.vue';
 
 const presupuesto = ref(0);
 const gastos = ref([]);
-const disponible = ref(0);
-const gastado = ref(0);
-
-// Cargar datos del localStorage al iniciar
-if (localStorage.getItem('presupuesto')) {
-  presupuesto.value = Number(localStorage.getItem('presupuesto'));
-  disponible.value = Number(localStorage.getItem('disponible'));
-}
-
-if (localStorage.getItem('gastos')) {
-  gastos.value = JSON.parse(localStorage.getItem('gastos'));
-  gastado.value = gastos.value.reduce((total, gasto) => total + gasto.cantidad, 0);
-}
 
 const definirPresupuesto = (cantidad) => {
+  if(cantidad <= 0) {
+    alert('El presupuesto debe ser mayor a 0');
+    return false;
+  }
   presupuesto.value = cantidad;
-  disponible.value = cantidad;
-  localStorage.setItem('presupuesto', cantidad);
-  localStorage.setItem('disponible', cantidad);
+  return true;
 };
 
 const agregarGasto = (gasto) => {
   gastos.value.push(gasto);
-  gastado.value += gasto.cantidad;
-  disponible.value -= gasto.cantidad;
-  localStorage.setItem('gastos', JSON.stringify(gastos.value));
-  localStorage.setItem('disponible', disponible.value);
 };
 
 const eliminarGasto = (id) => {
-  const gastoEliminado = gastos.value.find(gasto => gasto.id === id);
-  if (gastoEliminado) {
-    gastos.value = gastos.value.filter(gasto => gasto.id !== id);
-    gastado.value -= gastoEliminado.cantidad;
-    disponible.value += gastoEliminado.cantidad;
-    localStorage.setItem('gastos', JSON.stringify(gastos.value));
-    localStorage.setItem('disponible', disponible.value);
-  }
-};
-
-const generarGrafico = () => {
-  const categorias = ['ahorro', 'comida', 'casa', 'gastos', 'ocio', 'salud', 'suscripciones'];
-  const gastosPorCategoria = categorias.map(categoria => {
-    return gastos.value
-      .filter(gasto => gasto.categoria === categoria)
-      .reduce((total, gasto) => total + gasto.cantidad, 0);
-  });
-
-  const totalGastado = gastosPorCategoria.reduce((total, gasto) => total + gasto, 0);
-  if (totalGastado === 0) return '/grafico.jpg';
-
-  const porcentajes = gastosPorCategoria.map(gasto => {
-    return Math.round((gasto / totalGastado) * 100);
-  });
-
-  // Generar URL para el gráfico basado en los porcentajes
-  return `/grafico.jpg?${porcentajes.join(',')}`;
+  gastos.value = gastos.value.filter(gasto => gasto.id !== id);
 };
 
 provide('presupuesto', presupuesto);
@@ -76,42 +35,15 @@ provide('eliminarGasto', eliminarGasto);
 <template>
   <header>
     <h1>Planificador de Gastos</h1>
-    <div class="contenedor-header contenedor sombra">
+    <div class="contenedor sombra">
       <Presupuesto @definir-presupuesto="definirPresupuesto"/>
     </div>
   </header>
 
-  <main class="contenedor">
-    <div v-if="presupuesto > 0" class="dos-columnas">
-      <div class="contenido-principal">
-        <FormularioGasto />
-        <ListadoGastos />
-      </div>
-      <div class="resumen sombra">
-        <div class="tarjeta">
-          <h2>Resumen</h2>
-          <div class="presupuesto-item">
-            <p>Presupuesto:</p>
-            <span class="precio">${{ presupuesto }}</span>
-          </div>
-          <div class="presupuesto-item">
-            <p>Disponible:</p>
-            <span class="precio" :class="{ 'negativo': disponible < 0 }">${{ disponible }}</span>
-          </div>
-          <div class="presupuesto-item">
-            <p>Gastado:</p>
-            <span class="precio">${{ gastado }}</span>
-          </div>
-        </div>
-
-        <div class="grafico">
-          <h2>Distribución de Gastos</h2>
-          <img :src="generarGrafico()" alt="Gráfico de gastos" class="imagen-grafico">
-        </div>
-      </div>
-    </div>
+  <main v-if="presupuesto > 0" class="contenedor">
+    <FormularioGasto />
+    <ListadoGastos />
   </main>
-        
 </template>
 
 <style>
