@@ -46,12 +46,11 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 
 const nombre = ref('');
 const cantidad = ref(0);
 const categoria = ref('');
-const gastos = inject('gastos');
 
 const emit = defineEmits(['agregar-gasto']);
 

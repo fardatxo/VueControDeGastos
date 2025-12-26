@@ -1,13 +1,22 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
-import Formulario from './components/FormularioGasto.vue';
+import FormularioGasto from './components/FormularioGasto.vue';
 import ListadoGastos from './components/ListadoGastos.vue';
+import Filtros from './components/Filtros.vue';
 
 const presupuesto = ref(0);
+const isValidPresupuesto = ref(false);
 const gastos = ref([]);
-const disponible = ref(0);
-const gastado = ref(0);
+const filtro = ref('');
+
+const gastado = computed(() => {
+  return gastos.value.reduce((total, gasto) => total + gasto.cantidad, 0);
+});
+
+const disponible = computed(() => {
+  return presupuesto.value - gastado.value;
+});
 
 const definirPresupuesto = (cantidad) => {
   if(cantidad <= 0) {
@@ -15,35 +24,42 @@ const definirPresupuesto = (cantidad) => {
     return;
   }
   presupuesto.value = cantidad;
-  disponible.value = cantidad;
+  isValidPresupuesto.value = true;
 };
 
 const agregarGasto = (gasto) => {
   gastos.value.push(gasto);
-  gastado.value += gasto.cantidad;
-  disponible.value -= gasto.cantidad;
 };
 
 const eliminarGasto = (id) => {
-  const gasto = gastos.value.find(g => g.id === id);
-  gastado.value -= gasto.cantidad;
-  disponible.value += gasto.cantidad;
   gastos.value = gastos.value.filter(g => g.id !== id);
 };
 </script>
 
 <template>
-  <header>
-    <h1>Planificador de Gastos</h1>
-    <div class="contenedor sombra">
-      <Presupuesto @definir-presupuesto="definirPresupuesto"/>
-    </div>
-  </header>
+  <div>
+    <header>
+      <h1>Planificador de Gastos</h1>
+      <div class="contenedor sombra">
+        <Presupuesto @definir-presupuesto="definirPresupuesto"/>
+      </div>
+    </header>
 
-  <main v-if="presupuesto > 0" class="contenedor">
-    <FormularioGasto />
-    <ListadoGastos />
-  </main>
+    <main v-if="isValidPresupuesto" class="contenedor">
+      <Filtros v-model="filtro"/>
+      <div class="listado-gastos contenedor">
+        <ListadoGastos 
+          :gastos="gastosFiltrados"
+          @eliminar-gasto="eliminarGasto"
+        />
+      </div>
+      <div class="crear-gasto">
+        <FormularioGasto 
+          @agregar-gasto="agregarGasto"
+        />
+      </div>
+    </main>
+  </div>
 </template>
 
 <style>
