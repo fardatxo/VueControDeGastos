@@ -55,7 +55,20 @@ const gastos = inject('gastos');
 
 const agregarGasto = inject('agregarGasto');
 
+const disponible = inject('disponible');
+
 const handleAgregarGasto = () => {
+  if (cantidad.value <= 0) {
+    alert('La cantidad debe ser mayor a 0');
+    return;
+  }
+
+  if (cantidad.value > disponible.value) {
+    if (!confirm(`El gasto excede tu disponible. ¿Deseas agregarlo de todas formas?`)) {
+      return;
+    }
+  }
+
   const gasto = {
     id: Date.now(),
     nombre: nombre.value,

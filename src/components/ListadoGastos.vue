@@ -30,7 +30,16 @@
             <p class="fecha">{{ formatearFecha(gasto.fecha) }}</p>
           </div>
         </div>
-        <p class="cantidad">${{ gasto.cantidad }}</p>
+        <div class="acciones">
+          <p class="cantidad">${{ gasto.cantidad }}</p>
+          <button 
+            class="btn-eliminar"
+            @click="eliminarGasto(gasto.id)"
+            title="Eliminar gasto"
+          >
+            <img src="/cerrar.svg" alt="Eliminar gasto">
+          </button>
+        </div>
       </li>
     </ul>
   </div>
@@ -38,6 +47,8 @@
 
 <script setup>
 import { ref, computed, inject } from 'vue';
+
+const eliminarGasto = inject('eliminarGasto');
 
 const gastos = inject('gastos');
 const filtro = ref('');
@@ -148,10 +159,32 @@ h2 {
   font-size: 1.4rem;
 }
 
+.acciones {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .cantidad {
   font-size: 2rem;
   font-weight: 900;
   color: var(--azul);
   margin: 0;
+}
+
+.btn-eliminar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.btn-eliminar img {
+  width: 2rem;
+  height: 2rem;
+}
+
+.btn-eliminar:hover {
+  transform: scale(1.1);
 }
 </style>

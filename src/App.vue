@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, computed, watch } from 'vue';
+import { ref, provide, computed } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
 import FormularioGasto from './components/FormularioGasto.vue';
 import ListadoGastos from './components/ListadoGastos.vue';
@@ -37,11 +37,32 @@ const agregarGasto = (gasto) => {
 
 const eliminarGasto = (id) => {
   const gastoEliminado = gastos.value.find(gasto => gasto.id === id);
-  gastos.value = gastos.value.filter(gasto => gasto.id !== id);
-  gastado.value -= gastoEliminado.cantidad;
-  disponible.value += gastoEliminado.cantidad;
-  localStorage.setItem('gastos', JSON.stringify(gastos.value));
-  localStorage.setItem('disponible', disponible.value);
+  if (gastoEliminado) {
+    gastos.value = gastos.value.filter(gasto => gasto.id !== id);
+    gastado.value -= gastoEliminado.cantidad;
+    disponible.value += gastoEliminado.cantidad;
+    localStorage.setItem('gastos', JSON.stringify(gastos.value));
+    localStorage.setItem('disponible', disponible.value);
+  }
+};
+
+const generarGrafico = () => {
+  const categorias = ['ahorro', 'comida', 'casa', 'gastos', 'ocio', 'salud', 'suscripciones'];
+  const gastosPorCategoria = categorias.map(categoria => {
+    return gastos.value
+      .filter(gasto => gasto.categoria === categoria)
+      .reduce((total, gasto) => total + gasto.cantidad, 0);
+  });
+
+  const totalGastado = gastosPorCategoria.reduce((total, gasto) => total + gasto, 0);
+  if (totalGastado === 0) return '/grafico.jpg';
+
+  const porcentajes = gastosPorCategoria.map(gasto => {
+    return Math.round((gasto / totalGastado) * 100);
+  });
+
+  // Generar URL para el gráfico basado en los porcentajes
+  return `/grafico.jpg?${porcentajes.join(',')}`;
 };
 
 provide('presupuesto', presupuesto);
@@ -81,6 +102,11 @@ provide('eliminarGasto', eliminarGasto);
             <p>Gastado:</p>
             <span class="precio">${{ gastado }}</span>
           </div>
+        </div>
+
+        <div class="grafico">
+          <h2>Distribución de Gastos</h2>
+          <img :src="generarGrafico()" alt="Gráfico de gastos" class="imagen-grafico">
         </div>
       </div>
     </div>
