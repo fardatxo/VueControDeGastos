@@ -1,12 +1,31 @@
 <template>
-<form class="presupuesto">
+<form class="presupuesto" @submit.prevent="definirPresupuesto">
     <div class="campo">
         <label for="nuevo-presupuesto">Definir Presupuesto</label>
-        <input id="nuevo-presupuesto" class="nuevo-presupuesto" placeholder="Indica tu presupuesto" type="number"/>      
+        <input 
+            id="nuevo-presupuesto" 
+            class="nuevo-presupuesto" 
+            placeholder="Indica tu presupuesto" 
+            type="number"
+            min="0"
+            v-model.number="presupuesto"
+            required
+        />      
     </div>
     <input type="submit" value="Aceptar" />
 </form>
 </template>
+
+<script setup>
+import { ref, defineEmits } from 'vue';
+
+const presupuesto = ref(0);
+const emit = defineEmits(['definir-presupuesto']);
+
+const definirPresupuesto = () => {
+    emit('definir-presupuesto', presupuesto.value);
+};
+</script>
 
 <style scoped>
 .presupuesto {

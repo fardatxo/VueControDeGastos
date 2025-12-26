@@ -1,5 +1,16 @@
 <script setup>
-  import Presupuesto from './components/Presupuesto.vue';
+import { ref, provide } from 'vue';
+import Presupuesto from './components/Presupuesto.vue';
+
+const presupuesto = ref(0);
+const gastos = ref([]);
+
+const definirPresupuesto = (cantidad) => {
+  presupuesto.value = cantidad;
+};
+
+provide('presupuesto', presupuesto);
+provide('gastos', gastos);
 </script>
 
 <template>
