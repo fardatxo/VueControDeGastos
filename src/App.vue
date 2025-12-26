@@ -1,6 +1,7 @@
 <script setup>
 import { ref, provide } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
+import FormularioGasto from './components/FormularioGasto.vue';
 
 const presupuesto = ref(0);
 const gastos = ref([]);
@@ -15,11 +16,15 @@ provide('gastos', gastos);
 
 <template>
   <header>
-        <h1>Planificador de Gastos</h1>
-        <div class="contenedor-header contenedor sombra">
-            <Presupuesto/>
-        </div>
+    <h1>Planificador de Gastos</h1>
+    <div class="contenedor-header contenedor sombra">
+      <Presupuesto @definir-presupuesto="definirPresupuesto"/>
+    </div>
   </header>
+
+  <main class="contenedor">
+    <FormularioGasto v-if="presupuesto > 0"/>
+  </main>
         
 </template>
 
