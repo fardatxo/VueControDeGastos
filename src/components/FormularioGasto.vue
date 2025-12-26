@@ -1,6 +1,6 @@
 <template>
   <div class="formulario-gasto contenedor sombra">
-    <form @submit.prevent="agregarGasto">
+    <form @submit.prevent="handleAgregarGasto">
       <legend>Añade un gasto</legend>
 
       <div class="campo">
@@ -53,7 +53,9 @@ const cantidad = ref(0);
 const categoria = ref('');
 const gastos = inject('gastos');
 
-const agregarGasto = () => {
+const agregarGasto = inject('agregarGasto');
+
+const handleAgregarGasto = () => {
   const gasto = {
     id: Date.now(),
     nombre: nombre.value,
@@ -62,7 +64,7 @@ const agregarGasto = () => {
     fecha: new Date().toISOString()
   };
 
-  gastos.value.push(gasto);
+  agregarGasto(gasto);
   
   // Reset form
   nombre.value = '';

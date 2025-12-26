@@ -1,17 +1,55 @@
 <script setup>
-import { ref, provide } from 'vue';
+import { ref, provide, computed, watch } from 'vue';
 import Presupuesto from './components/Presupuesto.vue';
 import FormularioGasto from './components/FormularioGasto.vue';
+import ListadoGastos from './components/ListadoGastos.vue';
 
 const presupuesto = ref(0);
 const gastos = ref([]);
+const disponible = ref(0);
+const gastado = ref(0);
+
+// Cargar datos del localStorage al iniciar
+if (localStorage.getItem('presupuesto')) {
+  presupuesto.value = Number(localStorage.getItem('presupuesto'));
+  disponible.value = Number(localStorage.getItem('disponible'));
+}
+
+if (localStorage.getItem('gastos')) {
+  gastos.value = JSON.parse(localStorage.getItem('gastos'));
+  gastado.value = gastos.value.reduce((total, gasto) => total + gasto.cantidad, 0);
+}
 
 const definirPresupuesto = (cantidad) => {
   presupuesto.value = cantidad;
+  disponible.value = cantidad;
+  localStorage.setItem('presupuesto', cantidad);
+  localStorage.setItem('disponible', cantidad);
+};
+
+const agregarGasto = (gasto) => {
+  gastos.value.push(gasto);
+  gastado.value += gasto.cantidad;
+  disponible.value -= gasto.cantidad;
+  localStorage.setItem('gastos', JSON.stringify(gastos.value));
+  localStorage.setItem('disponible', disponible.value);
+};
+
+const eliminarGasto = (id) => {
+  const gastoEliminado = gastos.value.find(gasto => gasto.id === id);
+  gastos.value = gastos.value.filter(gasto => gasto.id !== id);
+  gastado.value -= gastoEliminado.cantidad;
+  disponible.value += gastoEliminado.cantidad;
+  localStorage.setItem('gastos', JSON.stringify(gastos.value));
+  localStorage.setItem('disponible', disponible.value);
 };
 
 provide('presupuesto', presupuesto);
 provide('gastos', gastos);
+provide('disponible', disponible);
+provide('gastado', gastado);
+provide('agregarGasto', agregarGasto);
+provide('eliminarGasto', eliminarGasto);
 </script>
 
 <template>
@@ -23,7 +61,20 @@ provide('gastos', gastos);
   </header>
 
   <main class="contenedor">
-    <FormularioGasto v-if="presupuesto > 0"/>
+    <div v-if="presupuesto > 0" class="dos-columnas">
+      <div class="contenido-principal">
+        <FormularioGasto />
+        <ListadoGastos />
+      </div>
+      <div class="resumen">
+        <div class="tarjeta">
+          <h2>Resumen</h2>
+          <p>Presupuesto: <span>${{ presupuesto }}</span></p>
+          <p>Disponible: <span>${{ disponible }}</span></p>
+          <p>Gastado: <span>${{ gastado }}</span></p>
+        </div>
+      </div>
+    </div>
   </main>
         
 </template>
@@ -84,6 +135,51 @@ header h1 {
   margin-top: -5rem;
   transform: translateY(5rem);
   padding: 5rem;
+}
+
+.dos-columnas {
+  display: grid;
+  gap: 4rem;
+}
+
+@media (min-width: 768px) {
+  .dos-columnas {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.contenido-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.resumen {
+  position: sticky;
+  top: 2rem;
+}
+
+.tarjeta {
+  padding: 3rem;
+  background-color: var(--blanco);
+  border-radius: 1rem;
+  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta h2 {
+  margin-top: 0;
+  color: var(--azul);
+}
+
+.tarjeta p {
+  font-size: 1.8rem;
+  color: var(--gris-oscuro);
+  margin-bottom: 1.5rem;
+}
+
+.tarjeta span {
+  font-weight: 700;
+  color: var(--azul);
 }
 
 .sombra {
