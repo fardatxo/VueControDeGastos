@@ -5,7 +5,8 @@
       <label for="filtro">Filtrar Gastos</label>
       <select 
         id="filtro"
-        v-model="modelValue"
+        :value="modelValue"
+        @change="$emit('update:modelValue', $event.target.value)"
       >
         <option value="">-- Todas las categorías --</option>
         <option value="ahorro">Ahorro</option>

@@ -46,7 +46,10 @@ const eliminarGasto = (id) => {
     </header>
 
     <main v-if="isValidPresupuesto" class="contenedor">
-      <Filtros v-model="filtro"/>
+      <Filtros 
+        :modelValue="filtro"
+        @update:modelValue="val => filtro = val"
+      />
       <div class="listado-gastos contenedor">
         <ListadoGastos 
           :gastos="gastosFiltrados"
