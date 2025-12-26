@@ -66,12 +66,21 @@ provide('eliminarGasto', eliminarGasto);
         <FormularioGasto />
         <ListadoGastos />
       </div>
-      <div class="resumen">
+      <div class="resumen sombra">
         <div class="tarjeta">
           <h2>Resumen</h2>
-          <p>Presupuesto: <span>${{ presupuesto }}</span></p>
-          <p>Disponible: <span>${{ disponible }}</span></p>
-          <p>Gastado: <span>${{ gastado }}</span></p>
+          <div class="presupuesto-item">
+            <p>Presupuesto:</p>
+            <span class="precio">${{ presupuesto }}</span>
+          </div>
+          <div class="presupuesto-item">
+            <p>Disponible:</p>
+            <span class="precio" :class="{ 'negativo': disponible < 0 }">${{ disponible }}</span>
+          </div>
+          <div class="presupuesto-item">
+            <p>Gastado:</p>
+            <span class="precio">${{ gastado }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -160,26 +169,38 @@ header h1 {
 }
 
 .tarjeta {
-  padding: 3rem;
-  background-color: var(--blanco);
+  padding: 2rem;
   border-radius: 1rem;
-  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .tarjeta h2 {
-  margin-top: 0;
-  color: var(--azul);
+  margin: 0 0 2rem 0;
+  text-align: center;
+  color: var(--gris-oscuro);
+  font-size: 2.4rem;
 }
 
-.tarjeta p {
-  font-size: 1.8rem;
-  color: var(--gris-oscuro);
+.presupuesto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.tarjeta span {
+.presupuesto-item p {
+  font-size: 1.6rem;
+  color: var(--gris-oscuro);
+  margin: 0;
+}
+
+.presupuesto-item .precio {
+  font-size: 1.8rem;
   font-weight: 700;
   color: var(--azul);
+}
+
+.presupuesto-item .negativo {
+  color: #ef4444;
 }
 
 .sombra {

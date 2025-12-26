@@ -105,11 +105,11 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
   background-color: var(--blanco);
-  border-radius: 1rem;
-  box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .contenido-gasto {

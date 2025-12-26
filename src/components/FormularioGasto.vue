@@ -108,18 +108,26 @@ legend {
 input[type="submit"] {
   background-color: var(--azul);
   border: none;
-  padding: 1rem;
-  font-size: 2rem;
+  padding: 1rem 0;
+  font-size: 1.8rem;
   text-align: center;
   margin-top: 2rem;
   color: var(--blanco);
-  font-weight: 900;
+  font-weight: 700;
   width: 100%;
+  border-radius: 0.5rem;
   transition: background-color 300ms ease;
 }
 
 input[type="submit"]:hover {
-  background-color: #1048A4;
+  background-color: #2563eb;
   cursor: pointer;
+}
+
+.campo input,
+.campo select {
+  background-color: var(--gris-claro);
+  border: none;
+  border-radius: 0.5rem;
 }
 </style>
