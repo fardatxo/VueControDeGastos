@@ -1,96 +1,83 @@
-<template>
-<form class="presupuesto" @submit.prevent="definirPresupuesto">
-    <div class="campo">
-        <label for="nuevo-presupuesto">Definir Presupuesto</label>
-        <input 
+<script setup>
+    import { ref } from 'vue';
+    import Alerta from './Alerta.vue';
+    
+    const presupuestoInicial = ref(0);
+    const error = ref('');
+    
+    const emit = defineEmits(['definir-presupuesto']);
+    
+    const validarPresupuesto = () => {
+      if (presupuestoInicial.value <= 0 || presupuestoInicial.value === '') {
+        error.value = 'EL PRESUPUESTO DEBE SER SUPERIOR A 0';
+        setTimeout(() => {
+          error.value = '';
+        }, 3000);
+        return;
+      }
+    
+      emit('definir-presupuesto', presupuestoInicial.value);
+    };
+    </script>
+    
+    <template>
+      <form class="presupuesto" @submit.prevent="validarPresupuesto">
+        <div class="campo">
+          <label for="nuevo-presupuesto">Definir Presupuesto</label>
+          <input 
             id="nuevo-presupuesto" 
             class="nuevo-presupuesto" 
             placeholder="Indica tu presupuesto" 
             type="number"
-            min="0"
-            v-model.number="presupuesto"
-            required
-        />      
-    </div>
-    <input type="submit" value="Aceptar" />
-</form>
-</template>
-
-<script setup>
-import { ref } from 'vue';
-
-const presupuesto = ref(0);
-
-const emit = defineEmits(['definir-presupuesto']);
-
-const definirPresupuesto = () => {
-    if (presupuesto.value <= 0) {
-        alert('El presupuesto debe ser mayor a 0');
-        return;
+            v-model="presupuestoInicial"
+          />      
+        </div>
+        <input type="submit" value="Aceptar" />
+      </form>
+    
+      <Alerta v-if="error">{{ error }}</Alerta>
+    </template>
+    
+    <style scoped>
+    .presupuesto {
+      width: 100%;
     }
-    emit('definir-presupuesto', presupuesto.value);
-};
-</script>
-
-<style scoped>
-.presupuesto {
-    width: 100%;
-}
-
-.campo {
-    display: grid;
-    gap: 2rem;
-}
-
-.presupuesto label {
-    font-size: 2.2rem;
-    text-align: center;
-    color: var(--azul);
-}
-
-.presupuesto input[type="number"] {
-    background-color: var(--gris-claro);
-    border-radius: 1rem;
-    padding: 1rem;
-    border: none;
-    font-size: 2.2rem;
-    text-align: center;
-}
-
-.presupuesto input[type="submit"] {
-    background-color: var(--azul);
-    border: none;
-    padding: 1rem;
-    font-size: 2rem;
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--blanco);
-    font-weight: 900;
-    width: 100%;
-    transition: background-color 300ms ease;
-}
-
-.presupuesto input[type="submit"]:hover {
-    background-color: #1048A4;
-    cursor: pointer;
-}
-
-.contenedor {
-    width: 90%;
-    max-width: 80rem;
-    margin: 0 auto;
-}
-
-.contenedor-header {
-    margin-top: -5rem;
-    transform: translateY(5rem);
-    padding: 5rem;
-}
-
-.sombra {
-    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background-color: var(--blanco);
-    border-radius: 1.2rem;
-    padding: 5rem;
-}
-</style>
+    
+    .campo {
+      display: grid;
+      gap: 2rem;
+    }
+    
+    .presupuesto label {
+      font-size: 2.2rem;
+      text-align: center;
+      color: var(--azul);
+    }
+    
+    .presupuesto input[type="number"] {
+      background-color: var(--gris-claro);
+      border-radius: 1rem;
+      padding: 1rem;
+      border: none;
+      font-size: 2.2rem;
+      text-align: center;
+    }
+    
+    .presupuesto input[type="submit"] {
+      background-color: var(--azul);
+      border: none;
+      padding: 1rem;
+      font-size: 2rem;
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--blanco);
+      font-weight: 900;
+      width: 100%;
+      transition: background-color 300ms ease;
+    }
+    
+    .presupuesto input[type="submit"]:hover {
+      background-color: #1048A4;
+      cursor: pointer;
+    }
+    </style>
